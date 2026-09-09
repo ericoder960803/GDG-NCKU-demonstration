@@ -1,0 +1,1465 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f9fc">
+<meta name="description" content="GDG Team Role Quiz">
+<title>GDG Team Role Quiz — V5.2 Mobile Readable</title>
+<style>
+:root{
+  --ink:#10203a;
+  --muted:#6f7d94;
+  --bg:#f6f9fd;
+  --surface:#fff;
+  --line:#e5ebf3;
+  --blue:#4285f4;
+  --red:#ea4335;
+  --yellow:#fbbc04;
+  --green:#34a853;
+  --shadow:0 24px 70px rgba(28,46,76,.10);
+  --shadow-soft:0 12px 32px rgba(28,46,76,.08);
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  min-width:320px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 14% 8%,rgba(66,133,244,.08),transparent 27rem),
+    radial-gradient(circle at 89% 18%,rgba(52,168,83,.06),transparent 25rem),
+    var(--bg);
+}
+button,a{font:inherit}
+button{color:inherit}
+button:focus-visible,a:focus-visible{
+  outline:3px solid rgba(66,133,244,.30);
+  outline-offset:3px;
+}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+.app-shell{
+  width:min(1180px,100%);
+  margin-inline:auto;
+  padding:clamp(12px,3vw,34px);
+}
+.app{
+  position:relative;
+  min-height:700px;
+  overflow:hidden;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:clamp(0px,3vw,34px);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(14px);
+}
+.topbar{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  padding:15px clamp(16px,3vw,30px);
+  position:relative;
+  z-index:20;
+}
+.brand{
+  flex:none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:17px;
+  font-weight:950;
+  letter-spacing:-.03em;
+}
+.gdg-mark{
+  width:30px;height:24px;position:relative;display:inline-block;
+}
+.gdg-mark i{position:absolute;width:10px;height:10px;border-radius:3px;transform:rotate(45deg)}
+.gdg-mark i:nth-child(1){background:var(--blue);left:1px;top:7px}
+.gdg-mark i:nth-child(2){background:var(--red);left:9px;top:1px}
+.gdg-mark i:nth-child(3){background:var(--yellow);left:9px;top:13px}
+.gdg-mark i:nth-child(4){background:var(--green);left:17px;top:7px}
+
+.progress{
+  margin-left:auto;
+  flex:1;
+  max-width:390px;
+  display:grid;
+  grid-template-columns:repeat(8,minmax(12px,1fr));
+  gap:5px;
+}
+.progress i{
+  height:8px;border-radius:999px;background:#edf2f7;
+  transition:background .35s ease,transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.progress i.done{background:#9fc0f8}
+.progress i.current{background:linear-gradient(90deg,var(--blue),var(--green));transform:scaleY(1.22)}
+.progress i.pop{animation:segPop .48s cubic-bezier(.2,.8,.2,1.3)}
+@keyframes segPop{0%{transform:scale(.45)}65%{transform:scale(1.2)}100%{transform:scale(1)}}
+
+.screen{
+  display:none;
+  padding:clamp(16px,3.4vw,38px);
+  min-height:630px;
+}
+.screen.active{
+  display:block;
+  animation:screenIn .50s cubic-bezier(.18,.82,.24,1);
+}
+@keyframes screenIn{
+  from{opacity:0;transform:translateY(18px) scale(.99)}
+  to{opacity:1;transform:none}
+}
+.wipe{
+  position:absolute;inset:0;z-index:60;pointer-events:none;overflow:hidden;opacity:0;
+}
+.wipe.on{opacity:1}
+.wipe b{
+  position:absolute;width:48%;aspect-ratio:1;border-radius:44% 56% 59% 41%/46% 42% 58% 54%;
+  opacity:.96;
+}
+.wipe b:nth-child(1){background:var(--blue);left:-22%;top:-18%}
+.wipe b:nth-child(2){background:var(--red);right:-22%;top:-12%}
+.wipe b:nth-child(3){background:var(--yellow);left:4%;bottom:-32%}
+.wipe b:nth-child(4){background:var(--green);right:4%;bottom:-31%}
+.wipe.on b:nth-child(1){animation:w1 .74s cubic-bezier(.18,.8,.2,1) both}
+.wipe.on b:nth-child(2){animation:w2 .74s .04s cubic-bezier(.18,.8,.2,1) both}
+.wipe.on b:nth-child(3){animation:w3 .74s .08s cubic-bezier(.18,.8,.2,1) both}
+.wipe.on b:nth-child(4){animation:w4 .74s .12s cubic-bezier(.18,.8,.2,1) both}
+@keyframes w1{0%{transform:translate(-100%,-90%) scale(.5)}48%{transform:translate(100%,78%) scale(1.9)}100%{transform:translate(250%,190%) scale(.5)}}
+@keyframes w2{0%{transform:translate(100%,-85%) scale(.5)}48%{transform:translate(-105%,74%) scale(1.8)}100%{transform:translate(-250%,185%) scale(.5)}}
+@keyframes w3{0%{transform:translate(-100%,100%) scale(.5)}48%{transform:translate(115%,-92%) scale(1.65)}100%{transform:translate(250%,-220%) scale(.5)}}
+@keyframes w4{0%{transform:translate(100%,100%) scale(.5)}48%{transform:translate(-115%,-88%) scale(1.7)}100%{transform:translate(-250%,-220%) scale(.5)}}
+
+/* Home */
+.home-grid{
+  min-height:570px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(340px,.92fr);
+  gap:clamp(18px,4vw,60px);
+  align-items:center;
+}
+.eyebrow{
+  display:inline-flex;
+  padding:8px 12px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  background:#fbfcfe;
+  font-size:13px;font-weight:750;
+}
+.home h1{
+  margin:18px 0 15px;
+  font-size:clamp(49px,7vw,84px);
+  line-height:.93;
+  letter-spacing:-.06em;
+}
+.grad{
+  background:linear-gradient(90deg,var(--blue),#347ee9,var(--green));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.lead{color:var(--muted);font-size:clamp(15px,1.8vw,18px);line-height:1.72;max-width:580px}
+.btn{
+  border:0;border-radius:18px;padding:15px 20px;min-height:50px;cursor:pointer;font-weight:900;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.98)}
+.btn-dark{background:var(--ink);color:white;box-shadow:0 14px 30px rgba(16,32,58,.14)}
+.btn-light{background:#fff;border:1px solid var(--line)}
+.btn-link{background:transparent;color:#405371;text-decoration:underline;padding-inline:8px}
+.home .btn-dark{margin-top:25px;min-width:220px}
+.mascot-stage{
+  position:relative;
+  height:500px;
+  min-width:0;
+}
+.mascot-stage img{
+  position:absolute;
+  object-fit:contain;
+  filter:drop-shadow(0 22px 20px rgba(33,50,80,.12));
+  animation:float 4s ease-in-out infinite;
+}
+.mascot-stage .m1{width:44%;left:4%;top:9%;z-index:3}
+.mascot-stage .m2{width:43%;right:1%;top:0%;animation-delay:.4s}
+.mascot-stage .m3{width:40%;left:11%;bottom:-1%;animation-delay:.8s}
+.mascot-stage .m4{width:42%;right:2%;bottom:3%;animation-delay:1.2s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-11px) rotate(1deg)}}
+.scribble{
+  margin-top:20px;color:#3e5270;font-family:"Comic Sans MS","Bradley Hand",cursive;
+  transform:rotate(-2deg);font-size:17px;
+}
+
+/* Quiz */
+.quiz-layout{
+  display:grid;
+  grid-template-columns:minmax(250px,.72fr) minmax(0,1.28fr);
+  gap:clamp(20px,4vw,55px);
+  align-items:start;
+}
+.q-side{
+  position:sticky;top:20px;
+  padding:clamp(6px,1vw,15px);
+}
+.q-side h2{
+  font-size:clamp(27px,3.6vw,42px);
+  line-height:1.12;letter-spacing:-.04em;margin:5px 0 12px;
+}
+.q-side p{color:var(--muted);line-height:1.65;margin:0}
+.answers{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.answer{
+  position:relative;
+  overflow:hidden;
+  min-height:310px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:25px;
+  text-align:left;
+  cursor:pointer;
+  background:#fff;
+  transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,border-color .22s ease;
+}
+.answer:hover{transform:translateY(-4px);box-shadow:var(--shadow-soft)}
+.answer:active{transform:scale(.99)}
+.answer img{
+  width:100%;
+  height:205px;
+  object-fit:contain;
+  display:block;
+  transition:transform .34s cubic-bezier(.2,.8,.2,1);
+}
+.answer strong{display:block;margin:4px 5px 3px;font-size:16px;line-height:1.4}
+.answer small{display:block;margin:0 5px;color:var(--muted);line-height:1.45}
+.answer[data-role="ideator"]{background:linear-gradient(180deg,#fff8d9,#fff 76%)}
+.answer[data-role="builder"]{background:linear-gradient(180deg,#eaf3ff,#fff 76%)}
+.answer[data-role="designer"]{background:linear-gradient(180deg,#ffeceb,#fff 76%)}
+.answer[data-role="driver"]{background:linear-gradient(180deg,#eaf8ee,#fff 76%)}
+.answer.selected{transform:translateY(-5px) scale(1.015);box-shadow:0 20px 45px rgba(26,43,72,.14)}
+.answer.selected img{animation:mascotReact .62s cubic-bezier(.18,.85,.22,1.2)}
+@keyframes mascotReact{
+  0%{transform:scale(1) rotate(0)}
+  35%{transform:scale(.9) rotate(-4deg)}
+  68%{transform:scale(1.10) rotate(3deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+.answer.selected::after{
+  content:"";
+  position:absolute;inset:-45%;
+  background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,0) 53%);
+  animation:flash .5s ease both;
+}
+@keyframes flash{0%{opacity:0;transform:scale(.45)}45%{opacity:1}100%{opacity:0;transform:scale(1.2)}}
+
+/* Reaction */
+.reaction{
+  text-align:center;
+  max-width:680px;
+  margin:0 auto;
+  padding-top:24px;
+}
+.reaction img{
+  width:min(420px,80vw);height:390px;object-fit:contain;
+  animation:reaction .75s cubic-bezier(.18,.85,.22,1.2);
+}
+@keyframes reaction{
+  0%{opacity:0;transform:translateY(38px) scale(.68) rotate(-7deg)}
+  60%{opacity:1;transform:translateY(-10px) scale(1.08) rotate(2deg)}
+  82%{transform:translateY(3px) scale(.98)}
+  100%{transform:none}
+}
+.reaction h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.04em;margin:2px 0 6px}
+.reaction p{color:var(--muted);margin:0}
+
+/* Mid */
+.mid{
+  max-width:900px;margin:0 auto;text-align:center;padding-top:20px;
+}
+.mid h2{font-size:clamp(34px,5vw,55px);letter-spacing:-.05em;margin:0 0 10px}
+.mid>p{color:var(--muted)}
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:32px 0;
+}
+.stat{
+  padding:15px;border:1px solid var(--line);border-radius:22px;background:#fff;
+}
+.stat img{width:100%;height:150px;object-fit:contain}
+.stat b{font-size:21px}.stat small{display:block;color:var(--muted);margin-top:3px}
+.quote{
+  display:inline-block;margin:6px 0 26px;padding:18px 24px;border-radius:21px;
+  background:#f7f9fc;font-size:20px;font-family:"Comic Sans MS","Bradley Hand",cursive;
+  transform:rotate(-1.5deg);color:#344963;
+}
+
+/* Loading & reveal */
+.loading,.reveal{text-align:center;max-width:720px;margin:auto;padding-top:20px}
+.loading-wheel{
+  display:grid;grid-template-columns:repeat(2,210px);justify-content:center;gap:0;margin:auto;
+}
+.loading-wheel img{width:210px;height:210px;object-fit:contain;margin:-16px;animation:float 2.7s ease-in-out infinite}
+.loading-wheel img:nth-child(2){animation-delay:.25s}
+.loading-wheel img:nth-child(3){animation-delay:.5s}
+.loading-wheel img:nth-child(4){animation-delay:.75s}
+.loading h2{font-size:clamp(30px,5vw,48px);letter-spacing:-.04em}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots i{width:10px;height:10px;border-radius:50%}
+.dots i:nth-child(1){background:var(--blue)}.dots i:nth-child(2){background:var(--red)}
+.dots i:nth-child(3){background:var(--yellow)}.dots i:nth-child(4){background:var(--green)}
+
+.reveal-art{position:relative;display:grid;place-items:center;width:min(460px,90vw);aspect-ratio:1;margin:auto}
+.reveal-art::before,.reveal-art::after{
+  content:"";position:absolute;inset:17%;border-radius:50%;border:3px solid var(--role-color,var(--blue));
+  opacity:.25;animation:ring 1.3s ease-out infinite;
+}
+.reveal-art::after{animation-delay:.35s}
+@keyframes ring{from{transform:scale(.6);opacity:.55}to{transform:scale(1.45);opacity:0}}
+.reveal-art img{width:92%;height:92%;object-fit:contain;position:relative;z-index:2;animation:heroPop 1s cubic-bezier(.15,.85,.22,1.2)}
+@keyframes heroPop{0%{opacity:0;transform:translateY(48px) scale(.5) rotate(-10deg)}62%{opacity:1;transform:translateY(-12px) scale(1.1) rotate(3deg)}100%{transform:none}}
+.reveal h1{font-size:clamp(48px,8vw,82px);letter-spacing:-.06em;margin:0}
+.reveal h3{margin:7px 0 0;font-size:22px}
+.confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;left:50%;top:48%;width:10px;height:24px;border-radius:999px;opacity:0}
+.confetti.go i{animation:confetti 1.25s cubic-bezier(.18,.8,.2,1) both}
+@keyframes confetti{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}
+  14%{opacity:1}
+  100%{opacity:0;transform:translate(var(--x),var(--y)) rotate(var(--r))}
+}
+
+/* Result */
+.result-grid{
+  display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr);gap:clamp(20px,4vw,55px);align-items:center;
+}
+.result-visual{text-align:center}
+.result-visual img{width:min(460px,100%);height:440px;object-fit:contain}
+.result-copy .kicker{font-size:14px;font-weight:850;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.result-copy h1{font-size:clamp(48px,7vw,78px);letter-spacing:-.06em;line-height:.95;margin:5px 0}
+.result-copy .zh{font-size:22px;font-weight:900;margin-bottom:16px}
+.result-copy>p{color:var(--muted);line-height:1.7}
+.trait-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}
+.panel{border:1px solid var(--line);border-radius:21px;padding:16px;background:#fff}
+.panel h3{margin:0 0 10px;font-size:14px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checks li{font-size:13px;display:flex;align-items:center;gap:8px}
+.tick{width:19px;height:19px;display:grid;place-items:center;background:var(--role-color,var(--yellow));color:#fff;border-radius:50%;font-size:11px;flex:none}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:38px 1fr;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.track{height:7px;background:#edf2f7;border-radius:999px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:inherit}
+
+/* Comic Hackathon transition */
+.comic{
+  position:relative;
+  min-height:610px;
+  display:grid;place-items:center;
+  text-align:center;
+  overflow:hidden;
+  border-radius:28px;
+  background:#fff;
+}
+.comic::before{
+  content:"";position:absolute;inset:-20%;
+  background:repeating-conic-gradient(from 0deg,rgba(66,133,244,.12) 0 3deg,transparent 3deg 10deg);
+  opacity:.45;
+  animation:comicSpin 8s linear infinite;
+}
+@keyframes comicSpin{to{transform:rotate(360deg)}}
+.comic-img{
+  position:relative;z-index:2;
+  width:min(980px,97%);
+  max-height:500px;
+  object-fit:contain;
+  animation:comicEnter .95s cubic-bezier(.15,.85,.22,1.2);
+  filter:drop-shadow(0 22px 30px rgba(26,43,72,.12));
+}
+@keyframes comicEnter{0%{opacity:0;transform:scale(.65) rotate(-5deg)}65%{opacity:1;transform:scale(1.06) rotate(1deg)}100%{transform:none}}
+.comic-tag{
+  position:absolute;z-index:4;left:22px;top:20px;
+  padding:8px 12px;border-radius:999px;background:var(--ink);color:white;font-size:12px;font-weight:950;letter-spacing:.08em;
+}
+.sfx{position:absolute;z-index:4;font-weight:1000;letter-spacing:-.05em;text-shadow:4px 4px 0 white}
+.sfx.go{right:4%;top:10%;font-size:clamp(36px,6vw,74px);color:var(--red);transform:rotate(-8deg)}
+.sfx.build{left:4%;bottom:10%;font-size:clamp(28px,5vw,60px);color:var(--blue);transform:rotate(8deg)}
+.comic-bottom{
+  position:absolute;z-index:5;left:0;right:0;bottom:16px;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;padding-inline:16px;
+}
+.comic-progress{position:absolute;z-index:5;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--blue),var(--red),var(--yellow),var(--green));transform-origin:left;animation:comicBar 2.15s linear forwards}
+@keyframes comicBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* Hackathon */
+.hack{
+  max-width:980px;margin:0 auto;text-align:center;
+}
+.hack h1{font-size:clamp(38px,6vw,66px);letter-spacing:-.055em;line-height:1;margin:10px 0}
+.hack>p{color:var(--muted);line-height:1.7;max-width:720px;margin-inline:auto}
+.team-line{display:flex;justify-content:center;align-items:flex-end;margin:20px 0 5px}
+.team-line img{width:min(24%,220px);margin-inline:-13px;object-fit:contain;filter:drop-shadow(0 18px 18px rgba(30,48,77,.10))}
+.role-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:22px 0}
+.role-card{border-radius:20px;padding:14px;border:1px solid var(--line);text-align:left;display:flex;gap:10px;align-items:center}
+.role-card img{width:64px;height:64px;object-fit:contain;flex:none}
+.role-card strong{display:block}.role-card small{color:var(--muted)}
+.role-card:nth-child(1){background:#fff8d9}.role-card:nth-child(2){background:#eaf3ff}.role-card:nth-child(3){background:#ffeceb}.role-card:nth-child(4){background:#eaf8ee}
+
+/* Share page */
+.share-page{
+  max-width:1000px;margin:0 auto;
+  display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,65px);align-items:center;
+}
+.share-card{
+  position:relative;
+  aspect-ratio:4/5;
+  overflow:hidden;
+  border-radius:32px;
+  background:
+    radial-gradient(circle at 20% 12%,var(--role-tint,#fff6cd),transparent 38%),
+    #fff;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  padding:clamp(18px,3vw,30px);
+  display:flex;flex-direction:column;
+}
+.share-card .mini-brand{font-weight:950;display:flex;align-items:center;gap:9px}
+.share-card img{width:90%;height:53%;object-fit:contain;align-self:center;margin-top:5px}
+.share-card h2{font-size:clamp(40px,6vw,67px);letter-spacing:-.06em;line-height:.95;margin:auto 0 3px;color:var(--role-color)}
+.share-card h3{margin:0;font-size:20px}
+.share-card p{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.55}
+.share-card .stamp{
+  position:absolute;right:18px;top:20px;font-family:"Comic Sans MS","Bradley Hand",cursive;font-weight:800;transform:rotate(6deg);color:#50627e;
+}
+.share-side h1{font-size:clamp(38px,5vw,58px);letter-spacing:-.05em;margin:0 0 10px}
+.share-side>p{color:var(--muted);line-height:1.65}
+.share-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:20px}
+.share-btn{
+  min-height:52px;border:1px solid var(--line);border-radius:17px;background:#fff;font-weight:850;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:var(--ink);
+}
+.share-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);grid-column:1/-1}
+.share-btn:hover{transform:translateY(-2px)}
+.share-note{font-size:12px;color:var(--muted);margin-top:12px}
+
+/* CTA */
+.cta{
+  max-width:780px;margin:0 auto;padding-top:15px;
+}
+.cta h1{font-size:clamp(40px,6vw,66px);letter-spacing:-.055em;line-height:1.04;margin:16px 0}
+.cta>p{color:var(--muted);line-height:1.7}
+.cta-list{margin-top:22px;padding:8px 16px;border-radius:24px;background:#f7f9fc}
+.cta-row{display:flex;gap:13px;align-items:center;padding:15px 3px;border-bottom:1px solid var(--line)}
+.cta-row:last-child{border-bottom:0}
+.ico{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-weight:950}
+.ico.b{background:#eaf3ff;color:var(--blue)}.ico.p{background:#f0ebff;color:#7150c8}.ico.g{background:#eaf8ee;color:var(--green)}
+.cta-row strong{display:block;font-size:14px}.cta-row small{color:var(--muted)}
+.footer{text-align:center;color:#8794a8;font-size:12px;margin-top:25px}
+
+/* toast */
+.toast{
+  position:absolute;z-index:100;left:50%;bottom:22px;transform:translate(-50%,16px);
+  padding:11px 15px;border-radius:14px;background:var(--ink);color:white;font-size:13px;font-weight:750;
+  opacity:0;pointer-events:none;transition:.25s;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* RWD */
+@media(max-width:880px){
+  .home-grid,.quiz-layout,.result-grid,.share-page{grid-template-columns:1fr}
+  .home-grid{gap:6px}
+  .home-copy{text-align:center}
+  .lead{margin-inline:auto}
+  .mascot-stage{height:430px;max-width:620px;width:100%;margin-inline:auto}
+  .q-side{position:static;text-align:center;max-width:720px;margin-inline:auto}
+  .answers{max-width:760px;margin-inline:auto}
+  .result-copy{text-align:center}
+  .trait-grid{max-width:680px;margin-inline:auto}
+  .share-card{max-width:540px;width:100%;margin-inline:auto}
+  .share-side{text-align:center}
+  .share-actions{max-width:580px;margin-inline:auto;margin-top:20px}
+  .role-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:580px){
+  .app-shell{padding:0}
+  .app{border-radius:0;min-height:100vh;box-shadow:none}
+  .topbar{padding-inline:15px}
+  .brand{font-size:15px}
+  .screen{padding:15px}
+  .answers{grid-template-columns:1fr}
+  .answer{min-height:245px}
+  .answer img{height:170px}
+  .mascot-stage{height:340px}
+  .mascot-stage .m1{width:46%}.mascot-stage .m2{width:46%}.mascot-stage .m3{width:43%}.mascot-stage .m4{width:43%}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .loading-wheel{grid-template-columns:repeat(2,minmax(120px,180px))}
+  .loading-wheel img{width:180px;height:180px}
+  .trait-grid{grid-template-columns:1fr}
+  .result-visual img{height:330px}
+  .role-grid{grid-template-columns:1fr}
+  .team-line img{width:30%;margin-inline:-9px}
+  .share-actions{grid-template-columns:1fr}
+  .share-btn.primary{grid-column:auto}
+  .share-card{aspect-ratio:3/4}
+  .share-card img{height:49%}
+}
+@media(max-width:370px){
+  .home h1{font-size:44px}
+  .mascot-stage{height:300px}
+  .progress{gap:3px}
+  .progress i{height:7px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* V5.1 mobile-first quiz fit + transition cleanup */
+
+/* Full viewport wipe for the ONLY major transitions we keep. */
+.wipe{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100dvh !important;
+  z-index:9999 !important;
+  pointer-events:none;
+  overflow:hidden;
+  opacity:0;
+}
+.wipe b{
+  position:absolute;
+  width:115vmax !important;
+  height:115vmax !important;
+  aspect-ratio:auto !important;
+  border-radius:50% !important;
+  transform-origin:center;
+}
+.wipe b:nth-child(1){left:-72vmax !important;top:-72vmax !important}
+.wipe b:nth-child(2){right:-72vmax !important;top:-72vmax !important}
+.wipe b:nth-child(3){left:-72vmax !important;bottom:-72vmax !important}
+.wipe b:nth-child(4){right:-72vmax !important;bottom:-72vmax !important}
+
+.wipe.on b:nth-child(1){animation:fullW1 .78s cubic-bezier(.2,.8,.2,1) both !important}
+.wipe.on b:nth-child(2){animation:fullW2 .78s .035s cubic-bezier(.2,.8,.2,1) both !important}
+.wipe.on b:nth-child(3){animation:fullW3 .78s .07s cubic-bezier(.2,.8,.2,1) both !important}
+.wipe.on b:nth-child(4){animation:fullW4 .78s .105s cubic-bezier(.2,.8,.2,1) both !important}
+
+@keyframes fullW1{
+  0%{transform:translate(-8%,-8%) scale(.18)}
+  46%{transform:translate(52%,52%) scale(1.02)}
+  100%{transform:translate(118%,118%) scale(.18)}
+}
+@keyframes fullW2{
+  0%{transform:translate(8%,-8%) scale(.18)}
+  46%{transform:translate(-52%,52%) scale(1.02)}
+  100%{transform:translate(-118%,118%) scale(.18)}
+}
+@keyframes fullW3{
+  0%{transform:translate(-8%,8%) scale(.18)}
+  46%{transform:translate(52%,-52%) scale(1.02)}
+  100%{transform:translate(118%,-118%) scale(.18)}
+}
+@keyframes fullW4{
+  0%{transform:translate(8%,8%) scale(.18)}
+  46%{transform:translate(-52%,-52%) scale(1.02)}
+  100%{transform:translate(-118%,-118%) scale(.18)}
+}
+
+/* On quiz screens, avoid scroll on phones: fit everything into viewport. */
+@media(max-width:580px){
+  body.quiz-active{
+    overflow:hidden;
+    height:100dvh;
+  }
+  body.quiz-active .app-shell{
+    height:100dvh;
+    overflow:hidden;
+  }
+  body.quiz-active .app{
+    height:100dvh;
+    min-height:0;
+    overflow:hidden;
+  }
+  body.quiz-active .topbar{
+    height:56px;
+    min-height:56px;
+    padding:10px 12px;
+  }
+  body.quiz-active .screen#quiz{
+    height:calc(100dvh - 56px);
+    min-height:0;
+    overflow:hidden;
+    padding:8px 10px 10px;
+  }
+  body.quiz-active .quiz-layout{
+    height:100%;
+    display:grid;
+    grid-template-rows:auto minmax(0,1fr);
+    grid-template-columns:1fr;
+    gap:7px;
+    align-items:stretch;
+  }
+  body.quiz-active .q-side{
+    padding:0 2px;
+    margin:0;
+    text-align:left;
+  }
+  body.quiz-active .q-side .eyebrow{
+    display:none;
+  }
+  body.quiz-active .q-side h2{
+    font-size:clamp(17px,5.1vw,21px);
+    line-height:1.16;
+    margin:0 0 3px;
+    letter-spacing:-.025em;
+  }
+  body.quiz-active .q-side p{
+    font-size:11px;
+    line-height:1.3;
+    margin:0;
+  }
+
+  /* Keep 2x2 layout on mobile so all four choices stay visible at once. */
+  body.quiz-active .answers{
+    min-height:0;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:repeat(2,minmax(0,1fr));
+    gap:7px;
+    overflow:hidden;
+  }
+  body.quiz-active .answer{
+    min-height:0;
+    height:100%;
+    padding:7px 7px 6px;
+    border-radius:17px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  body.quiz-active .answer img{
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    height:auto;
+    max-height:none;
+    object-fit:contain;
+    margin:0 auto 1px;
+  }
+  body.quiz-active .answer strong{
+    flex:none;
+    font-size:clamp(11px,3.15vw,13px);
+    line-height:1.22;
+    margin:1px 1px 2px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  body.quiz-active .answer small{
+    flex:none;
+    font-size:clamp(9px,2.55vw,10.5px);
+    line-height:1.18;
+    margin:0 1px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  body.quiz-active .progress{
+    max-width:none;
+    width:auto;
+    gap:3px;
+  }
+  body.quiz-active .progress i{
+    height:6px;
+  }
+}
+
+/* Very short phones: shrink mascot area a little more. */
+@media(max-width:580px) and (max-height:720px){
+  body.quiz-active .topbar{height:50px;min-height:50px}
+  body.quiz-active .screen#quiz{height:calc(100dvh - 50px);padding-top:5px}
+  body.quiz-active .q-side h2{font-size:16px}
+  body.quiz-active .q-side p{display:none}
+  body.quiz-active .answer{padding:5px}
+  body.quiz-active .answer strong{font-size:10.5px}
+  body.quiz-active .answer small{font-size:9px;-webkit-line-clamp:1}
+}
+
+/* Hackathon comic must use the full viewport on mobile, not a small card. */
+@media(max-width:580px){
+  #comic{
+    padding:0 !important;
+    min-height:calc(100dvh - 56px) !important;
+  }
+  #comic .comic{
+    min-height:calc(100dvh - 56px) !important;
+    height:calc(100dvh - 56px);
+    border-radius:0 !important;
+    width:100%;
+  }
+  #comic .comic-img{
+    width:100% !important;
+    height:100% !important;
+    max-height:none !important;
+    object-fit:cover !important;
+    object-position:center;
+  }
+  #comic .comic-tag{
+    left:14px;top:14px;
+  }
+  #comic .sfx.go{
+    right:8px;top:8%;
+    font-size:clamp(34px,13vw,58px);
+  }
+  #comic .sfx.build{
+    left:8px;bottom:13%;
+    font-size:clamp(27px,10vw,45px);
+  }
+  #comic .comic-bottom{
+    bottom:18px;
+  }
+}
+
+/* Final reveal should also fill the mobile viewport more strongly. */
+@media(max-width:580px){
+  #reveal{
+    min-height:calc(100dvh - 56px);
+    padding:8px 12px 14px;
+  }
+  #reveal .reveal{
+    min-height:calc(100dvh - 80px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  #reveal .reveal-art{
+    width:min(88vw,420px);
+  }
+}
+
+
+/* V5.2 — mobile readability pass
+   Goal: four answers stay visible without scrolling, but mascots + main answer text remain readable. */
+
+@media(max-width:580px){
+  body.quiz-active .screen#quiz{
+    /* Slightly more horizontal breathing room, still fixed to viewport */
+    padding:7px 8px 9px;
+  }
+
+  body.quiz-active .quiz-layout{
+    /* Let the question consume only what it needs; give the rest to answer cards */
+    grid-template-rows:max-content minmax(0,1fr);
+    gap:6px;
+  }
+
+  body.quiz-active .q-side{
+    min-height:0;
+    padding:0 2px;
+  }
+
+  body.quiz-active .q-side h2{
+    font-size:clamp(18px,5.35vw,22px);
+    line-height:1.14;
+    margin:0 0 2px;
+    max-width:none;
+  }
+
+  body.quiz-active .q-side p{
+    font-size:11.5px;
+    line-height:1.25;
+    margin:0;
+  }
+
+  body.quiz-active .answers{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+
+  body.quiz-active .answer{
+    padding:6px 7px 8px;
+    border-radius:18px;
+    min-width:0;
+    min-height:0;
+    height:100%;
+    display:grid;
+    /* mascot dynamically expands; title gets a readable fixed zone */
+    grid-template-rows:minmax(0,1fr) auto;
+    align-items:stretch;
+  }
+
+  body.quiz-active .answer img{
+    width:100%;
+    height:100%;
+    min-height:0;
+    max-height:none;
+    object-fit:contain;
+    object-position:center;
+    margin:0;
+    /* subtle scale so transparent-background mascots feel present */
+    transform:scale(1.08);
+    transform-origin:center;
+  }
+
+  body.quiz-active .answer strong{
+    position:relative;
+    z-index:2;
+    font-size:clamp(13px,3.65vw,15px);
+    line-height:1.18;
+    font-weight:900;
+    letter-spacing:-.015em;
+    margin:4px 1px 0;
+    padding:0 1px;
+    min-height:2.35em;
+    display:flex;
+    align-items:center;
+    -webkit-line-clamp:unset;
+    overflow:visible;
+  }
+
+  /* On mobile the secondary sentence is the first thing to sacrifice.
+     This frees ~20–30% more room for the mascot and makes the primary choice readable. */
+  body.quiz-active .answer small{
+    display:none !important;
+  }
+}
+
+/* Typical modern phone height: make mascots extra prominent. */
+@media(max-width:580px) and (min-height:760px){
+  body.quiz-active .answer img{
+    transform:scale(1.15);
+  }
+  body.quiz-active .answer strong{
+    font-size:clamp(13.5px,3.8vw,15.5px);
+  }
+}
+
+/* Short phones: preserve readability by reducing question chrome, not answer text. */
+@media(max-width:580px) and (max-height:720px){
+  body.quiz-active .q-side p{
+    display:none;
+  }
+  body.quiz-active .q-side h2{
+    font-size:16.5px;
+    line-height:1.12;
+    margin-bottom:0;
+  }
+  body.quiz-active .quiz-layout{
+    gap:4px;
+  }
+  body.quiz-active .answers{
+    gap:6px;
+  }
+  body.quiz-active .answer{
+    padding:4px 5px 6px;
+    border-radius:15px;
+  }
+  body.quiz-active .answer img{
+    transform:scale(1.08);
+  }
+  body.quiz-active .answer strong{
+    font-size:12.5px;
+    line-height:1.14;
+    min-height:2.3em;
+    margin-top:2px;
+  }
+}
+
+/* Very narrow phones: keep text legible and avoid awkward wrapping. */
+@media(max-width:380px){
+  body.quiz-active .answer{
+    padding-inline:5px;
+  }
+  body.quiz-active .answer strong{
+    font-size:12.3px;
+    letter-spacing:-.02em;
+  }
+}
+
+/* Landscape phones: switch to a 4-column answer strip, which gives the mascots more vertical room. */
+@media(max-height:520px) and (orientation:landscape) and (max-width:950px){
+  body.quiz-active .screen#quiz{
+    padding:5px 8px 7px;
+  }
+  body.quiz-active .quiz-layout{
+    grid-template-rows:max-content minmax(0,1fr);
+    gap:4px;
+  }
+  body.quiz-active .q-side h2{
+    font-size:16px;
+    margin:0;
+  }
+  body.quiz-active .q-side p{
+    display:none;
+  }
+  body.quiz-active .answers{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    grid-template-rows:1fr;
+    gap:6px;
+  }
+  body.quiz-active .answer{
+    padding:4px 5px 5px;
+  }
+  body.quiz-active .answer img{
+    transform:scale(1.03);
+  }
+  body.quiz-active .answer strong{
+    font-size:11.5px;
+    min-height:2.2em;
+  }
+}
+
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <main class="app" id="app">
+    <div class="wipe" id="wipe" aria-hidden="true"><b></b><b></b><b></b><b></b></div>
+    <div class="toast" id="toast" aria-live="polite"></div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="gdg-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        GDG
+      </div>
+      <div class="progress" id="progress" hidden aria-label="測驗進度">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+    </header>
+
+    <section class="screen active home" id="home">
+      <div class="home-grid">
+        <div class="home-copy">
+          <div class="eyebrow">Everyone brings something different.</div>
+          <h1>What's your<br><span class="grad">team role?</span></h1>
+          <p class="lead">用幾個團隊情境，看看你最自然會為團隊帶來什麼。不是能力高低，也不需要任何技術背景。</p>
+          <button class="btn btn-dark" id="startBtn">開始探索　→</button>
+          <div class="scribble">Different minds build a brighter tomorrow.</div>
+        </div>
+        <div class="mascot-stage" aria-label="四個團隊角色">
+          <img class="m1" src="assets/ideator.png" alt="Ideator 提案者">
+          <img class="m2" src="assets/builder.png" alt="Builder 建造者">
+          <img class="m3" src="assets/designer.png" alt="Designer 設計者">
+          <img class="m4" src="assets/driver.png" alt="Driver 推進者">
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="quiz">
+      <div class="quiz-layout">
+        <aside class="q-side">
+          <div class="eyebrow">Team Scenario</div>
+          <h2 id="qTitle"></h2>
+          <p id="qSub"></p>
+        </aside>
+        <div class="answers" id="answers"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="reaction">
+      <div class="reaction">
+        <img id="reactionImg" alt="">
+        <h2 id="reactionTitle"></h2>
+        <p id="reactionText"></p>
+      </div>
+    </section>
+
+    <section class="screen" id="mid">
+      <div class="mid">
+        <div class="eyebrow">Halfway there</div>
+        <h2>你已經完成一半了！</h2>
+        <p>你的答案正在慢慢拼出你在團隊中最自然的角色。</p>
+        <div class="stats">
+          <div class="stat"><img src="assets/ideator.png" alt=""><b id="pctIdeator">0%</b><small>Ideator</small></div>
+          <div class="stat"><img src="assets/builder.png" alt=""><b id="pctBuilder">0%</b><small>Builder</small></div>
+          <div class="stat"><img src="assets/designer.png" alt=""><b id="pctDesigner">0%</b><small>Designer</small></div>
+          <div class="stat"><img src="assets/driver.png" alt=""><b id="pctDriver">0%</b><small>Driver</small></div>
+        </div>
+        <div class="quote">There's no one right way to be on a team.</div><br>
+        <button class="btn btn-dark" id="continueBtn">繼續看看　→</button>
+      </div>
+    </section>
+
+    <section class="screen" id="loading">
+      <div class="loading">
+        <div class="loading-wheel">
+          <img src="assets/ideator.png" alt="">
+          <img src="assets/builder.png" alt="">
+          <img src="assets/designer.png" alt="">
+          <img src="assets/driver.png" alt="">
+        </div>
+        <h2>Finding your role...</h2>
+        <div class="dots"><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section class="screen" id="reveal">
+      <div class="reveal">
+        <div class="eyebrow">Your team role is</div>
+        <div class="reveal-art" id="revealArt">
+          <img id="revealImg" alt="">
+          <div class="confetti" id="confetti"></div>
+        </div>
+        <h1 id="revealName"></h1>
+        <h3 id="revealZh"></h3>
+      </div>
+    </section>
+
+    <section class="screen" id="result">
+      <div class="result-grid">
+        <div class="result-visual"><img id="resultImg" alt=""></div>
+        <div class="result-copy">
+          <div class="kicker">You are the</div>
+          <h1 id="resultName"></h1>
+          <div class="zh" id="resultZh"></div>
+          <p id="resultDesc"></p>
+          <div class="trait-grid">
+            <div class="panel">
+              <h3>在團隊中，你通常會...</h3>
+              <ul class="checks" id="traitList"></ul>
+            </div>
+            <div class="panel">
+              <h3>你的風格</h3>
+              <div class="bars" id="bars"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-dark" id="hackBtn">進入 Hackathon　→</button>
+            <button class="btn btn-light" id="sharePageBtn">分享我的結果</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="comic">
+      <div class="comic">
+        <div class="comic-tag">NEXT STAGE</div>
+        <div class="sfx go">GO!</div>
+        <div class="sfx build">BUILD!</div>
+        <img class="comic-img" src="assets/hackathon_comic.png" alt="四個吉祥物衝向 Hackathon 的漫畫式轉場">
+        <div class="comic-bottom">
+          <span style="color:#60708a;font-weight:800">即將進入 Hackathon...</span>
+          <button class="btn btn-light" id="skipComicBtn">立即進入</button>
+        </div>
+        <div class="comic-progress"></div>
+      </div>
+    </section>
+
+    <section class="screen" id="hackathon">
+      <div class="hack">
+        <div class="eyebrow">Different roles. One team.</div>
+        <h1>把你的角色<br>帶進 Hackathon！</h1>
+        <p>Hackathon 不等於「四個工程師坐在一起」。有人找問題、有人實作、有人設計體驗、有人推動團隊走到最後。</p>
+        <div class="team-line">
+          <img src="assets/ideator.png" alt="">
+          <img src="assets/builder.png" alt="">
+          <img src="assets/designer.png" alt="">
+          <img src="assets/driver.png" alt="">
+        </div>
+        <div class="role-grid">
+          <div class="role-card"><img src="assets/ideator.png" alt=""><div><strong>Ideator</strong><small>提出點子・定義問題</small></div></div>
+          <div class="role-card"><img src="assets/builder.png" alt=""><div><strong>Builder</strong><small>把想法做出來</small></div></div>
+          <div class="role-card"><img src="assets/designer.png" alt=""><div><strong>Designer</strong><small>讓作品更好理解</small></div></div>
+          <div class="role-card"><img src="assets/driver.png" alt=""><div><strong>Driver</strong><small>推進合作・完成目標</small></div></div>
+        </div>
+        <button class="btn btn-dark" id="ctaBtn">想知道怎麼開始　→</button>
+      </div>
+    </section>
+
+    <section class="screen" id="share">
+      <div class="share-page">
+        <article class="share-card" id="shareCard">
+          <div class="mini-brand"><span class="gdg-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>GDG Team Role</div>
+          <div class="stamp">What’s yours?</div>
+          <img id="shareMascot" alt="">
+          <div style="margin-top:auto">
+            <small style="font-weight:850;color:var(--muted)">MY TEAM ROLE</small>
+            <h2 id="shareRole"></h2>
+            <h3 id="shareRoleZh"></h3>
+            <p id="shareCopy"></p>
+          </div>
+        </article>
+        <div class="share-side">
+          <div class="eyebrow">Share your result</div>
+          <h1>把你的角色<br>丟給朋友看看</h1>
+          <p>部署上線後，分享連結會直接帶朋友進入這個角色分享頁；他也可以再開始做自己的測驗。</p>
+          <div class="share-actions">
+            <button class="share-btn primary" id="nativeShareBtn">↗　分享到其他 App</button>
+            <a class="share-btn" id="lineShareBtn" target="_blank" rel="noopener">LINE</a>
+            <a class="share-btn" id="xShareBtn" target="_blank" rel="noopener">X</a>
+            <a class="share-btn" id="facebookShareBtn" target="_blank" rel="noopener">Facebook</a>
+            <button class="share-btn" id="copyBtn">複製分享連結</button>
+            <button class="share-btn" id="downloadCardBtn">下載分享卡 PNG</button>
+            <button class="share-btn" id="backResultBtn">← 回結果頁</button>
+            <button class="share-btn" id="tryQuizBtn">換朋友測測看</button>
+          </div>
+          <div class="share-note">Instagram 等 App 可使用「分享到其他 App」叫出手機原生分享選單。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="cta">
+      <div class="cta">
+        <h1>想試著參加<br>一次 Hackathon 嗎？</h1>
+        <p>GDG 可以帶你一起組隊、找題目、學工具、做 Prototype、準備 Demo。沒有參賽經驗也可以從第一次開始。</p>
+        <button class="btn btn-dark" id="learnBtn">我想了解更多　→</button>
+        <div class="cta-list">
+          <div class="cta-row"><div class="ico b">▣</div><div><strong>收到下一場 Hackathon 資訊</strong><small>有活動時再通知你</small></div></div>
+          <div class="cta-row"><div class="ico p">◇</div><div><strong>參加工作坊 / 分享會</strong><small>先玩工具、認識不同角色</small></div></div>
+          <div class="cta-row"><div class="ico g">◎</div><div><strong>加入 GDG 社群</strong><small>找到隊友，也找到更多可能</small></div></div>
+        </div>
+        <div class="footer">Different people. Brighter together.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const roles={
+  ideator:{
+    en:"Ideator",zh:"提案者",color:"#d99d00",tint:"#fff4c3",img:"assets/ideator.png",
+    desc:"你很容易從普通問題裡看見新的可能。當別人還在問「可不可以」，你常常已經開始想「如果這樣做呢？」",
+    react:["好有想法！","你會自然替團隊打開新的可能。"],
+    traits:["發現值得解決的問題","提出新的方向","連結不同可能","讓團隊開始動"],
+    style:[["創意",94,"#FBBC04"],["分析",68,"#4285F4"],["執行",58,"#EA4335"],["溝通",74,"#34A853"]]
+  },
+  builder:{
+    en:"Builder",zh:"建造者",color:"#4285F4",tint:"#dfeeff",img:"assets/builder.png",
+    desc:"你喜歡把想法真正做出來。與其一直停在討論，你更願意先做一個 Prototype、先試一次，再從結果繼續前進。",
+    react:["直接做起來！","你習慣用行動把模糊的想法變清楚。"],
+    traits:["快速開始實作","把想法變成 Prototype","嘗試工具與技術","用成果驗證方向"],
+    style:[["創意",66,"#FBBC04"],["分析",82,"#4285F4"],["執行",95,"#EA4335"],["溝通",60,"#34A853"]]
+  },
+  designer:{
+    en:"Designer",zh:"設計者",color:"#EA4335",tint:"#ffe1de",img:"assets/designer.png",
+    desc:"你會自然注意別人到底怎麼理解、怎麼使用一個東西。你擅長把複雜事情整理得清楚、自然，而且更有感。",
+    react:["這樣更有感！","你會替團隊注意使用者真正的感受。"],
+    traits:["理解使用者需求","整理資訊與流程","讓作品更好理解","提升整體體驗"],
+    style:[["創意",86,"#FBBC04"],["分析",72,"#4285F4"],["執行",64,"#EA4335"],["溝通",89,"#34A853"]]
+  },
+  driver:{
+    en:"Driver",zh:"推進者",color:"#34A853",tint:"#dff4e6",img:"assets/driver.png",
+    desc:"你很容易看見團隊現在缺什麼、下一步要做什麼。你擅長讓不同意見收斂，讓大家真的一起走到終點。",
+    react:["繼續往前！","你會自然把大家重新拉回目標與節奏。"],
+    traits:["整理方向與優先順序","協調不同意見","掌握進度與節奏","讓團隊真正完成"],
+    style:[["創意",58,"#FBBC04"],["分析",80,"#4285F4"],["執行",88,"#EA4335"],["溝通",94,"#34A853"]]
+  }
+};
+
+const questions=[
+  ["團隊突然有一個很瘋的新點子，你第一個反應通常是？","選最像你真實反應的那一個。",[
+    ["ideator","等等，我還有更好的想法！","先把可能性打開。"],
+    ["builder","聽起來不錯，我先做做看","先試再說。"],
+    ["designer","先想想大家實際會怎麼用","體驗很重要。"],
+    ["driver","先整理目標和下一步","別讓好點子卡在混亂裡。"]]],
+  ["團隊卡住兩個小時，你最可能做什麼？","想像真實的你，不是理想答案。",[
+    ["driver","把大家拉回現在最重要的事","先重新聚焦。"],
+    ["builder","快速測兩三個方法","做了才知道。"],
+    ["ideator","換個角度重新想問題","也許我們卡錯地方。"],
+    ["designer","去問真正會用的人","可能忽略了使用情境。"]]],
+  ["只剩六小時就要 Demo，你最在意哪一件事？","最後關頭最容易看見人的本能。",[
+    ["builder","核心功能一定要真的跑得起來","Demo 不能只剩投影片。"],
+    ["driver","每個人知道最後要交什麼","終點前不要亂掉。"],
+    ["designer","第一次看到的人也要看得懂","作品要被理解。"],
+    ["ideator","核心概念一定要讓人記得","至少知道我們為何而做。"]]],
+  ["碰到一個完全沒用過的新工具，你通常會？","例如新的 AI、設計工具或開發平台。",[
+    ["designer","先看它能改善什麼體驗","工具最後還是服務人。"],
+    ["ideator","先想它可以解什麼新問題","新工具會打開新可能。"],
+    ["builder","直接開起來玩","十分鐘後再說。"],
+    ["driver","先判斷值不值得團隊投入","時間也需要被管理。"]]],
+  ["如果隊友意見完全不同，你通常會站在哪個位置？","衝突很能看出一個人的團隊角色。",[
+    ["designer","回到真正需求看哪個更合理","先理解誰要用。"],
+    ["driver","讓大家先收斂一個能往前的決策","不同意也能前進。"],
+    ["ideator","再提出第三條路","不一定只能二選一。"],
+    ["builder","做個小 Prototype 比較","讓結果幫忙決定。"]]],
+  ["如果要讓陌生人在三分鐘內理解作品，你會先做什麼？","想像評審現在就走過來。",[
+    ["designer","整理畫面、流程和故事","先讓他看懂。"],
+    ["ideator","抓出一句最有力的核心主張","先知道為什麼做。"],
+    ["driver","安排誰講什麼、怎麼接","不要全部一起搶話。"],
+    ["builder","確保最關鍵功能能展示","Demo 比口號重要。"]]],
+  ["團隊突然多一個超棒的新想法，但時間已經不多，你會？","怎麼處理「很想做」和「做得完」？",[
+    ["ideator","把它縮成一個更聰明的版本","留下最有價值的核心。"],
+    ["driver","先砍掉不是必要的東西","做得完比較重要。"],
+    ["builder","快速做一版估成本","很快就知道值不值得。"],
+    ["designer","判斷它是否真的改善體驗","不是新功能都值得加。"]]],
+  ["專案結束後，哪一件事最讓你有成就感？","最後一題。",[
+    ["builder","我真的把它從零做出來了","從 0 到 1 很爽。"],
+    ["designer","別人第一次用就懂了","作品真的被理解。"],
+    ["ideator","原本的腦洞變成大家記得的作品","想法真的成真。"],
+    ["driver","一群不同的人真的一起完成了","團隊走到了終點。"]]]
+];
+
+const screens=[...document.querySelectorAll(".screen")];
+const progress=document.getElementById("progress");
+const segs=[...progress.querySelectorAll("i")];
+const wipe=document.getElementById("wipe");
+const toast=document.getElementById("toast");
+let index=0;
+let scores={ideator:0,builder:0,designer:0,driver:0};
+let comicTimer=null;
+let resultRole="ideator";
+
+function show(id){
+  screens.forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.body.classList.toggle("quiz-active", id==="quiz");
+  if(id!=="quiz") window.scrollTo({top:0,behavior:"smooth"});
+}
+function transition(fn){
+  wipe.classList.remove("on");
+  void wipe.offsetWidth;
+  wipe.classList.add("on");
+  setTimeout(fn,260);
+  setTimeout(()=>wipe.classList.remove("on"),850);
+}
+function toastMsg(msg){
+  toast.textContent=msg;toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),1800);
+}
+function updateProgress(){
+  segs.forEach((s,i)=>{
+    s.className="";
+    if(i<index)s.classList.add("done");
+    if(i===index&&index<questions.length)s.classList.add("current");
+  });
+  if(index>0&&segs[index-1]){
+    segs[index-1].classList.add("pop");
+    setTimeout(()=>segs[index-1]?.classList.remove("pop"),500);
+  }
+}
+function startQuiz(){
+  clearTimeout(comicTimer);
+  index=0;scores={ideator:0,builder:0,designer:0,driver:0};
+  progress.hidden=false;
+  updateProgress();
+  renderQuestion();
+}
+function renderQuestion(){
+  const [title,sub,opts]=questions[index];
+  document.getElementById("qTitle").textContent=title;
+  document.getElementById("qSub").textContent=sub;
+  const answers=document.getElementById("answers");
+  answers.innerHTML="";
+  opts.forEach(([role,title2,sub2])=>{
+    const b=document.createElement("button");
+    b.className="answer";b.dataset.role=role;
+    b.innerHTML=`<img src="${roles[role].img}" alt="${roles[role].zh}"><strong>${title2}</strong><small>${sub2}</small>`;
+    b.addEventListener("click",()=>choose(role,b));
+    answers.appendChild(b);
+  });
+  show("quiz");
+}
+function choose(role,btn){
+  document.querySelectorAll(".answer").forEach(x=>x.disabled=true);
+  btn.classList.add("selected");
+  scores[role]++;
+
+  /* No page transition between questions: only a short local selection response. */
+  setTimeout(()=>{
+    index++;
+    updateProgress();
+
+    if(index===4){
+      renderMid();
+    }else if(index<questions.length){
+      renderQuestion();
+    }else{
+      showLoading();
+    }
+  },420);
+}
+function renderMid(){
+  const total=Math.max(1,Object.values(scores).reduce((a,b)=>a+b,0));
+  const pct=k=>Math.round(scores[k]/total*100)+"%";
+  document.getElementById("pctIdeator").textContent=pct("ideator");
+  document.getElementById("pctBuilder").textContent=pct("builder");
+  document.getElementById("pctDesigner").textContent=pct("designer");
+  document.getElementById("pctDriver").textContent=pct("driver");
+  show("mid");
+}
+function showLoading(){
+  progress.hidden=true;
+  show("loading");
+  setTimeout(()=>transition(renderReveal),1500);
+}
+function getWinner(){
+  const order=["ideator","builder","designer","driver"];
+  return order.sort((a,b)=>scores[b]-scores[a])[0];
+}
+function createConfetti(){
+  const box=document.getElementById("confetti");
+  box.innerHTML="";
+  const colors=["#4285F4","#EA4335","#FBBC04","#34A853"];
+  for(let i=0;i<32;i++){
+    const bit=document.createElement("i");
+    const a=Math.PI*2*i/32+(Math.random()*.25);
+    const d=125+Math.random()*170;
+    bit.style.background=colors[i%4];
+    bit.style.setProperty("--x",`${Math.cos(a)*d}px`);
+    bit.style.setProperty("--y",`${Math.sin(a)*d}px`);
+    bit.style.setProperty("--r",`${Math.random()*500-250}deg`);
+    bit.style.animationDelay=`${Math.random()*.15}s`;
+    box.appendChild(bit);
+  }
+  requestAnimationFrame(()=>box.classList.add("go"));
+}
+function renderReveal(){
+  resultRole=getWinner();
+  const r=roles[resultRole];
+  const art=document.getElementById("revealArt");
+  art.style.setProperty("--role-color",r.color);
+  document.getElementById("revealImg").src=r.img;
+  document.getElementById("revealName").textContent=r.en;
+  document.getElementById("revealName").style.color=r.color;
+  document.getElementById("revealZh").textContent=r.zh;
+  show("reveal");
+  createConfetti();
+  setTimeout(renderResult,2300);
+}
+function renderResult(){
+  const r=roles[resultRole];
+  const sec=document.getElementById("result");
+  sec.style.setProperty("--role-color",r.color);
+  document.getElementById("resultImg").src=r.img;
+  document.getElementById("resultName").textContent=r.en;
+  document.getElementById("resultName").style.color=r.color;
+  document.getElementById("resultZh").textContent=r.zh;
+  document.getElementById("resultDesc").textContent=r.desc;
+  document.getElementById("traitList").innerHTML=r.traits.map(x=>`<li><span class="tick">✓</span>${x}</li>`).join("");
+  document.getElementById("bars").innerHTML=r.style.map(([n,v,c])=>`<div class="bar"><span>${n}</span><div class="track"><i style="width:${v}%;background:${c}"></i></div></div>`).join("");
+  show("result");
+}
+function showComic(){
+  clearTimeout(comicTimer);
+  show("comic");
+  comicTimer=setTimeout(()=>transition(()=>show("hackathon")),2150);
+}
+function openSharePage(updateUrl=true){
+  const r=roles[resultRole];
+  const share=document.getElementById("share");
+  share.style.setProperty("--role-color",r.color);
+  share.style.setProperty("--role-tint",r.tint);
+  document.getElementById("shareMascot").src=r.img;
+  document.getElementById("shareRole").textContent=r.en;
+  document.getElementById("shareRoleZh").textContent=r.zh;
+  document.getElementById("shareCopy").textContent=r.desc;
+  if(updateUrl){
+    const url=new URL(location.href);
+    url.searchParams.set("share","1");
+    url.searchParams.set("role",resultRole);
+    history.replaceState({}, "", url);
+  }
+  updateShareLinks();
+  progress.hidden=true;
+  show("share");
+}
+function baseShareUrl(){
+  const u=new URL(location.href);
+  u.search="";
+  u.hash="";
+  u.searchParams.set("share","1");
+  u.searchParams.set("role",resultRole);
+  return u.toString();
+}
+function shareText(){
+  const r=roles[resultRole];
+  return `我的 GDG Team Role 是 ${r.en}／${r.zh}！你在團隊裡是哪種角色？`;
+}
+function updateShareLinks(){
+  const url=baseShareUrl();
+  const text=shareText();
+  document.getElementById("lineShareBtn").href=`https://line.me/R/msg/text/?${encodeURIComponent(text+" "+url)}`;
+  document.getElementById("xShareBtn").href=`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  document.getElementById("facebookShareBtn").href=`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+}
+async function nativeShare(){
+  const data={title:"GDG Team Role",text:shareText(),url:baseShareUrl()};
+  if(navigator.share){
+    try{await navigator.share(data)}catch(e){}
+  }else{
+    await copyLink();
+  }
+}
+async function copyLink(){
+  const link=baseShareUrl();
+  try{
+    await navigator.clipboard.writeText(link);
+    toastMsg("分享連結已複製");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();
+    toastMsg("分享連結已複製");
+  }
+}
+async function downloadShareCard(){
+  const r=roles[resultRole];
+  const canvas=document.createElement("canvas");
+  canvas.width=1080;canvas.height=1350;
+  const ctx=canvas.getContext("2d");
+  ctx.fillStyle="#ffffff";ctx.fillRect(0,0,1080,1350);
+  const grd=ctx.createRadialGradient(190,150,10,190,150,520);
+  grd.addColorStop(0,r.tint);grd.addColorStop(1,"rgba(255,255,255,0)");
+  ctx.fillStyle=grd;ctx.fillRect(0,0,1080,800);
+  ctx.fillStyle="#10203a";ctx.font="900 38px system-ui";ctx.fillText("GDG Team Role",70,90);
+  const img=new Image();img.src=r.img;
+  try{await img.decode()}catch(e){}
+  const maxW=820,maxH=680;
+  const ratio=Math.min(maxW/img.naturalWidth,maxH/img.naturalHeight);
+  const w=img.naturalWidth*ratio,h=img.naturalHeight*ratio;
+  ctx.drawImage(img,(1080-w)/2,150,w,h);
+  ctx.fillStyle=r.color;ctx.font="900 116px system-ui";ctx.fillText(r.en,70,990);
+  ctx.fillStyle="#10203a";ctx.font="900 48px system-ui";ctx.fillText(r.zh,72,1050);
+  ctx.fillStyle="#6f7d94";ctx.font="500 31px system-ui";
+  const lines=wrapCanvas(ctx,r.desc,930);
+  lines.slice(0,4).forEach((line,i)=>ctx.fillText(line,72,1120+i*48));
+  ctx.fillStyle="#10203a";ctx.font="800 28px system-ui";ctx.fillText("What's your team role?",72,1300);
+  const a=document.createElement("a");
+  a.download=`gdg-team-role-${resultRole}.png`;
+  a.href=canvas.toDataURL("image/png");
+  a.click();
+}
+function wrapCanvas(ctx,text,maxWidth){
+  const words=text.split("");
+  const lines=[];let line="";
+  for(const ch of words){
+    const test=line+ch;
+    if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch}else line=test;
+  }
+  if(line)lines.push(line);
+  return lines;
+}
+
+document.getElementById("startBtn").addEventListener("click",startQuiz);
+document.getElementById("continueBtn").addEventListener("click",renderQuestion);
+document.getElementById("hackBtn").addEventListener("click",()=>transition(showComic));
+document.getElementById("skipComicBtn").addEventListener("click",()=>{clearTimeout(comicTimer);transition(()=>show("hackathon"))});
+document.getElementById("ctaBtn").addEventListener("click",()=>transition(()=>show("cta")));
+document.getElementById("sharePageBtn").addEventListener("click",()=>openSharePage(true));
+document.getElementById("nativeShareBtn").addEventListener("click",nativeShare);
+document.getElementById("copyBtn").addEventListener("click",copyLink);
+document.getElementById("downloadCardBtn").addEventListener("click",downloadShareCard);
+document.getElementById("backResultBtn").addEventListener("click",()=>{
+  const u=new URL(location.href);u.search="";history.replaceState({},"",u);
+  renderResult();
+});
+document.getElementById("tryQuizBtn").addEventListener("click",()=>{
+  const u=new URL(location.href);u.search="";history.replaceState({},"",u);
+  startQuiz();
+});
+document.getElementById("learnBtn").addEventListener("click",()=>toastMsg("這裡可以換成你們的報名表／LINE／Discord／IG 連結"));
+
+/* Share permalink support */
+const params=new URLSearchParams(location.search);
+const shareRole=params.get("role");
+if(params.get("share")==="1" && roles[shareRole]){
+  resultRole=shareRole;
+  openSharePage(false);
+}
+</script>
+</body>
+</html>
